@@ -4,7 +4,7 @@
 
 #include "Row.h"
 #include <sstream>
-
+#include <unordered_map>
 
 
 Row::Row(std::string month, std::string day, std::string time, std::string ip,std::string port, std::string log) {
@@ -18,7 +18,10 @@ Row::Row(std::string month, std::string day, std::string time, std::string ip,st
     this->ipArray = buildIPArray(ip);
 
 }
-
+std::string Row::toString() const {
+    // Sample implementation concatenating member variables.
+    return month + " " + day + " " + time + " " + ip + " " + std::to_string(port) + " " + log;
+}
 
 
 std::vector<int> Row::buildIPArray(const std::string &ip) {
@@ -78,4 +81,29 @@ size_t Row::convertDate(const std::string& m, const std::string& d, const std::s
 
 
     return totalSeconds;
+}
+
+std::unordered_map<std::string, std::string> monthMap = {
+        {"Jan", "01"}, {"Feb", "02"}, {"Mar", "03"},
+        {"Apr", "04"}, {"May", "05"}, {"Jun", "06"},
+        {"Jul", "07"}, {"Aug", "08"}, {"Sep", "09"},
+        {"Oct", "10"}, {"Nov", "11"}, {"Dec", "12"}
+};
+
+std::string Row::convertToDate(const std::string& dateTime) {
+    std::istringstream iss(dateTime);
+    std::string month, day, time;
+    iss >> month >> day >> time;
+
+    // Split time into HH, MM, SS
+    std::string hour, minute, second;
+    std::istringstream timeIss(time);
+    std::getline(timeIss, hour, ':');
+    std::getline(timeIss, minute, ':');
+    std::getline(timeIss, second, ':');
+
+
+    std::string formattedDate = monthMap[month] + day + hour + minute + second;
+
+    return formattedDate;
 }

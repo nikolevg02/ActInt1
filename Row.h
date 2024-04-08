@@ -26,6 +26,19 @@ public:
 
     size_t convertDate(const std::string& month, const std::string& day, const std::string& time);
 
+    bool operator<(const Row& other) const {
+        return this->timeNumber < other.timeNumber;
+    }
+
+    // Operator> for comparison
+    bool operator>(const Row& other) const {
+        return this->timeNumber > other.timeNumber;
+    }
+
+    int compareTo(const std::string &dateTime) const;
+
+    static std::string convertToDate(const std::string &dateTime);
+    std::string toString() const; // Declaration
 };
 
 

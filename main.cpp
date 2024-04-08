@@ -74,21 +74,30 @@ Row parseLogEntry(const std::string& logEntry) {
 
 int main() {
     std::vector<Row> rows;
-    std::ifstream file("bitacora.txt"); // Adjust the file path as necessary.
+    std::ifstream file("bitacora.txt");
     std::string line;
 
     while (std::getline(file, line)) {
         rows.push_back(parseLogEntry(line));
     }
 
-    // Assuming DataFrame and its associated sort function are correctly implemented.
+
     DataFrame df(rows);
-    df.radixSort(); // Sorting the rows within the DataFrame.
+    df.radixSort();
+
+    std::string startDate, endDate;
+    std::cout << "Enter the start date (Jun 01 00:22:36): ";
+    std::getline(std::cin, startDate);
+    std::cout << "Enter the end date (Jun 02 23:59:59): ";
+    std::getline(std::cin, endDate);
+
+    df.displayRecordsInRange(startDate, endDate);
+    df.saveToFile("bitacora_ordenada.txt");
 
     // Print the sorted data.
-    for (const auto& row : df.Data) {
+   /* for (const auto& row : df.Data) {
         std::cout << row.month << " " << row.day << " " << row.time << " " << row.ip << ":" << row.port << " " << row.log << std::endl;
-    }
+    }*/
 
     return 0;
 }
