@@ -14,12 +14,13 @@ public:
     std::string day;
     std::string time;
     std::string ip;
+    int port;
     std::string log;
-    int timeNumber;
+    size_t timeNumber;
     std::vector<int> ipArray;
-    int logNumber;
 
-    Row(std::string m, std::string d, std::string t, std::string i, std::string l,  int tn, std::vector<int> ipA, int ln);
+
+    Row(std::string m, std::string d, std::string t, std::string i,std::string p, std::string l);
 
     static std::vector<int> buildIPArray(const std::string& ip);
 

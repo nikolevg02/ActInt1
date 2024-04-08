@@ -1,3 +1,4 @@
+/*
 
 #include "Row.h"
 #include <iostream>
@@ -9,7 +10,8 @@ int main(){
 
 
         // The time string
-        std::string time = "18:43:58";
+     */
+/*   std::string time = "18:43:58";
 
         // Lambda to process the time string
         auto convertToSeconds = [](const std::string& time) -> int {
@@ -41,7 +43,52 @@ int main(){
         // Use the lambda and print the result
         int totalSeconds = convertToSeconds(time);
         std::cout << "Total seconds: " << totalSeconds << std::endl;
+*//*
 
 
+
+        Row Row(Sep 23 12:58:18 80.169.79.65:1150 "Failed password for illegal user root")
         return 0;
     }
+*/
+#include "DataFrame.h"
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
+
+// Utility function to parse a log line and create a Row object.
+Row parseLogEntry(const std::string& logEntry) {
+    std::istringstream iss(logEntry);
+    std::string month, day, time, ipPort, logMessage;
+    iss >> month >> day >> time >> ipPort;
+    std::getline(iss, logMessage); // Capture the rest of the entry as the log message.
+
+    // Extract IP and port.
+    size_t colonPos = ipPort.find(':');
+    std::string ip = ipPort.substr(0, colonPos);
+    std::string portStr = ipPort.substr(colonPos + 1);
+
+    return Row(month, day, time, ip, portStr, logMessage);
+}
+
+int main() {
+    std::vector<Row> rows;
+    std::ifstream file("bitacora.txt"); // Adjust the file path as necessary.
+    std::string line;
+
+    while (std::getline(file, line)) {
+        rows.push_back(parseLogEntry(line));
+    }
+
+    // Assuming DataFrame and its associated sort function are correctly implemented.
+    DataFrame df(rows);
+    df.radixSort(); // Sorting the rows within the DataFrame.
+
+    // Print the sorted data.
+    for (const auto& row : df.Data) {
+        std::cout << row.month << " " << row.day << " " << row.time << " " << row.ip << ":" << row.port << " " << row.log << std::endl;
+    }
+
+    return 0;
+}

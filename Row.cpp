@@ -7,8 +7,15 @@
 
 
 
-Row::Row(std::string m, std::string d, std::string t, std::string i, std::string l, int tn, std::vector<int> ipA,
-         int ln) {
+Row::Row(std::string month, std::string day, std::string time, std::string ip,std::string port, std::string log) {
+    this->month = month;
+    this->day = day;
+    this->time = time;
+    this->ip = ip;
+    this->log = log;
+    this->port = std::stoi(port);
+    this->timeNumber = convertDate(month,day,time);
+    this->ipArray = buildIPArray(ip);
 
 }
 
