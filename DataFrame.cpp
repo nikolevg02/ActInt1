@@ -8,20 +8,52 @@
 #include <cmath>
 #include <algorithm>
 
-
+/**
+ * Default constructor for DataFrame.
+ *
+ * @complexity O(1)
+ */
 DataFrame::DataFrame() = default;
+
+/**
+ * Constructs a DataFrame instance initialized with provided data.
+ *
+ * @param inputData Vector of Row containing the initial data.
+ * @complexity O(1) - Complexity might vary depending on the operation of std::move.
+ */
 DataFrame::DataFrame(std::vector<Row> inputData) : Data(std::move(inputData)) {
 }
+
+/**
+ * Retrieves the digit at the specified position from a number.
+ *
+ * @param num The number from which to get the digit.
+ * @param place The position of the digit to retrieve, starting from 0.
+ * @return The digit at the specified position.
+ * @complexity O(1)
+ */
  int getDigit(int num, int place) {
     return std::abs(num) / static_cast<int>(std::pow(10, place)) % 10;
 }
 
-
+/**
+ * Counts the number of digits in an integer.
+ *
+ * @param num The integer number to count its digits.
+ * @return The count of digits in the number.
+ * @complexity O(1) - Assuming that the logarithm operation is constant.
+ */
  int countDigits(int num) {
     if (num == 0) return 1;
     return std::floor(std::log10(std::abs(num))) + 1;
 }
-
+/**
+ * Finds the maximum number of digits among all numbers in the provided data.
+ *
+ * @param data Vector of Row containing the numbers to evaluate.
+ * @return The maximum number of digits found.
+ * @complexity O(n) - Linear complexity
+ */
  int mostDigits(const std::vector<Row>& data) {
     int maxDigits = 0;
     for (const auto& row : data) {
@@ -29,7 +61,13 @@ DataFrame::DataFrame(std::vector<Row> inputData) : Data(std::move(inputData)) {
     }
     return maxDigits;
 }
-
+/**
+ * Concatenates a vector of vectors into a single vector.
+ *
+ * @param buckets The vector of vectors to concatenate. Each inner vector is a collection of Row objects.
+ * @return A single vector containing all Row objects from the input vectors, concatenated in order.
+ * @complexity O(n) - Where n is the total number of Row objects across all vectors. The complexity arises from inserting elements into the result vector.
+ */
  std::vector<Row> vectorConcat(const std::vector<std::vector<Row>>& buckets) {
     std::vector<Row> result;
     for (const auto& bucket : buckets) {
@@ -39,12 +77,22 @@ DataFrame::DataFrame(std::vector<Row> inputData) : Data(std::move(inputData)) {
 }
 
 
-
+/**
+ * Sorts the data within the DataFrame using the Radix Sort algorithm.
+ * This method specifically sorts based on the 'timeNumber' field of each Row.
+ * It distributes the Rows into buckets according to each digit's value (from least to most significant digit),
+ * then concatenates these buckets back into the original data array, iteratively improving the sort order.
+ *
+ * @complexity O(nk) - Where n is the number of Rows in the DataFrame and k is the maximum number of digits
+ * in the 'timeNumber' across all Rows. The complexity accounts for distributing Rows into buckets and then
+ * concatenating them back, repeated for each digit.
+ * @note This method outputs the number of moves and states that there are no comparisons directly to std::cout.
+ */
 void DataFrame::radixSort() {
-    // Implementation directly manipulates `Data`, no need to pass it
+
     if (Data.empty()) return;
     int moveCount = 0;
-    // Logic remains the same, but it operates on `this->Data`
+
     int maxDigitCount = mostDigits(Data);
 
     for (int k = 0; k < maxDigitCount; ++k) {
@@ -59,6 +107,12 @@ void DataFrame::radixSort() {
     std::cout << "Radix Sort - Moves: " << moveCount << ", Comparisons: None" << std::endl;
 
 }
+/**
+ * Sorts the data within the DataFrame using the Bubble Sort algorithm.
+ * @complexity O(n^2) - Where n is the number of Rows in the DataFrame. This is because, in the worst case,
+ * each element needs to be compared with every other element.
+ * @note This method outputs the number of swaps and comparisons directly to std::cout.
+ */
 void DataFrame::bubbleSort() {
     bool swapped;
     int swapCount = 0;
@@ -67,20 +121,25 @@ void DataFrame::bubbleSort() {
     do {
         swapped = false;
         for (size_t i = 1; i < Data.size(); ++i) {
-            comparisonCount++; // Increment comparison count here
+            comparisonCount++;
             if (Data[i - 1] > Data[i]) {
                 std::swap(Data[i - 1], Data[i]);
                 swapped = true;
-                swapCount++; // Increment swap count here
+                swapCount++;
             }
         }
     } while (swapped);
 
-    // Print the counts
     std::cout << "Bubble Sort - Swaps: " << swapCount << ", Comparisons: " << comparisonCount << std::endl;
 }
 
-// Helper function to parse the dateTime string
+/**
+ * Parses a datetime string into its different parts.
+ * @param dateTime The datetime string to parse.
+ * @return A vector of strings, where each string is a part of the datetime (year, month, day, hour, minute, second).
+ * @complexity O(n) - Where n is the length of the input string. The complexity is derived from iterating over
+ * each character in the input string to split it into parts.
+ */
 std::vector<std::string> parseDateTime(const std::string& dateTime) {
     std::istringstream iss(dateTime);
     std::vector<std::string> parts;
@@ -91,85 +150,16 @@ std::vector<std::string> parseDateTime(const std::string& dateTime) {
     return parts;
 }
 
-int Row::compareTo(const std::string& dateTime) const {
-    auto dateTimeParts = parseDateTime(dateTime);
-
-    // Assuming the format is always correct and parts.size() == 4 (month, day, time)
-    std::string inputMonth = dateTimeParts[0];
-    std::string inputDay = dateTimeParts[1];
-    std::string inputTime = dateTimeParts[2] + " " + dateTimeParts[3]; // Concatenate to match format
-
-    // Compare month, day, and time
-    if (month < inputMonth) return -1;
-    else if (month > inputMonth) return 1;
-    else { // Months are equal, compare days
-        if (day < inputDay) return -1;
-        else if (day > inputDay) return 1;
-        else { // Days are equal, compare time
-            if (time < inputTime) return -1;
-            else if (time > inputTime) return 1;
-            else return 0; // Equal
-        }
-    }
-}
 
 
-/*
-int DataFrame::binarySearch(const std::string& dateTime, bool searchFirst) {
-    int low = 0;
-    int high = Data.size() - 1;
-    int result = -1; // -1 indicates not found
-
-    while (low <= high) {
-        int mid = low + (high - low) / 2;
-        // Assuming Row objects can be directly compared with dateTime strings
-        // You may need to adjust this comparison to match your data structure
-        if (Data[mid].compareTo(dateTime) == 0) {
-            result = mid; // Found a match
-            // If searching for first occurrence, move left
-            if (searchFirst) {
-                high = mid - 1;
-            }
-                // If searching for last occurrence, move right
-            else {
-                low = mid + 1;
-            }
-        }
-        else if (Data[mid].compareTo(dateTime) < 0) {
-            low = mid + 1;
-        }
-        else {
-            high = mid - 1;
-        }
-    }
-    return result;
-}
-*/
-
-/* DataFrame DataFrame::trimData(DataFrame &origData, int startDayN, int endDayN) {
-    int startIndex = -1;
-    int endIndex = -1;
-
-    // Find start and end indices in a single pass
-    for (int i = 0; i < origData.size(); ++i) {
-        if (startIndex == -1 && origData.Data[i].timeNumber >= startDayN) {
-            startIndex = i; // Set start index when we find the first matching or exceeding dayNumber
-        }
-        if (origData.Data[i].timeNumber <= endDayN) {
-            endIndex = i; // Update end index while we are within or equal to the endDayN
-        }
-    }
-
-    // Check if valid segment was found
-    if (startIndex == -1 || endIndex == -1 || startIndex > endIndex) {
-        return {}; // Return an empty vector if no valid segment is found
-    }
-
-    // Create the segmented data vector using the calculated indices
-    std::vector<Row> trimmedData(origData.Data.begin() + startIndex, origData.Data.begin() + endIndex + 1);
-
-    return trimmedData;
-}*/
+/**
+ * Creates a new DataFrame containing only the rows from the original DataFrame whose 'timeNumber' falls within the specified range.
+ * @param origData The original DataFrame to trim data from.
+ * @param startDayN The inclusive start of the 'timeNumber' range.
+ * @param endDayN The inclusive end of the 'timeNumber' range.
+ * @return A new DataFrame containing rows from the original DataFrame that fall within the specified 'timeNumber' range.
+ * @complexity O(n) - Where n is the number of rows in the original DataFrame. The complexity comes from needing to iterate through each row once.
+ */
 
 DataFrame DataFrame::trimData(DataFrame& origData, int startDayN, int endDayN) {
     DataFrame result;
@@ -180,75 +170,20 @@ DataFrame DataFrame::trimData(DataFrame& origData, int startDayN, int endDayN) {
     }
     return result;
 }
-/*
-void DataFrame::displayRecordsInRange(const std::string& start, const std::string& end) {
-    // Convert start and end to comparable format
-    auto startComparable = Row::convertToDate(start);
-    auto endComparable = Row::convertToDate(end);
 
-    // Implement binary search to find the start and end indices
-    int startIndex = binarySearch(startComparable, true); // True for finding the start date
-    int endIndex = binarySearch(endComparable, false); // False for finding the end date
-
-    // Verify both dates are found
-    if (startIndex == -1 || endIndex == -1) {
-        std::cout << "One or both dates not found in the log." << std::endl;
-        return;
-    }
-
-    // Display records
-    for (int i = startIndex; i <= endIndex; ++i) {
-        std::cout << Data[i].toString() << std::endl; // Assuming toString method exists
-    }
-}
-*/
-
+/**
+ * Saves the DataFrame's data to a file, with each row converted to a string representation followed by a newline.
+ * @param filename The name of the file to save the DataFrame's data to.
+ * @complexity O(n) - Where n is the number of rows in the DataFrame. The complexity is derived from iterating over each row to write it to the file.
+ */
 void DataFrame::saveToFile(const std::string& filename) {
     std::ofstream file(filename);
     for (const auto& row : Data) {
-        file << row.toString() << std::endl; // Assuming toString method exists
+        file << row.toString() << std::endl;
     }
     file.close();
 }
 
-int DataFrame::binarySearchByTimeNumber(size_t referenceTimeNumber) {
-    int low = 0;
-    int high = Data.size() - 1;
-
-    while (low <= high) {
-        int mid = low + (high - low) / 2;
-
-        if (Data[mid].timeNumber == referenceTimeNumber) {
-            return mid; // Found the matching time number, return its index
-        } else if (Data[mid].timeNumber < referenceTimeNumber) {
-            low = mid + 1;
-        } else {
-            high = mid - 1;
-        }
-    }
-
-    return -1; // Not found
-}
-DataFrame DataFrame::segmentData(std::string start, std::string end) {
-    std::istringstream issStart(start);
-    std::string monthS, dayS, timeS;
-    issStart >> monthS >> dayS >> timeS;
-
-
-
-    std::istringstream issEnd(end);
-    std::string monthE, dayE, timeE;
-    issEnd >> monthE >> dayE >> timeE;
-
-    Row startTemp = Row(monthS,dayS,timeS,"000.000.000","0000","temp");
-    Row endTemp = Row(monthE,dayE,timeE,"000.000.000","0000","temp");
-    size_t startSecondsTime = startTemp.timeNumber;
-    size_t endSecondsTime = endTemp.timeNumber;
-
-
-
-    return DataFrame();
-}
 
 size_t DataFrame::size() {
 
@@ -256,6 +191,11 @@ size_t DataFrame::size() {
     return this->Data.size();
 }
 
+
+/**
+ * Prints the contents of the DataFrame to the standard output.
+ * @complexity O(n) - Where n is the number of rows in the DataFrame. The complexity arises from the need to iterate through each row and print it.
+ */
 void DataFrame::Print() {
     for(auto data: this->Data){
         std::cout<<data.month<<" "<<data.day<<" "<<data.time<<" "<<data.ip<<data.port<<" "<<data.log<<std::endl;

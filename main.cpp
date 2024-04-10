@@ -1,56 +1,3 @@
-/*
-
-#include "Row.h"
-#include <iostream>
-#include <string>
-#include <sstream>
-int main(){
-
-
-
-
-        // The time string
-     */
-/*   std::string time = "18:43:58";
-
-        // Lambda to process the time string
-        auto convertToSeconds = [](const std::string& time) -> int {
-            std::istringstream stream(time);
-            std::string segment;
-            int hours = 0, minutes = 0, seconds = 0, totalSeconds = 0;
-
-            // Get hours
-            std::getline(stream, segment, ':');
-            hours = std::stoi(segment);
-
-            // Get minutes
-            std::getline(stream, segment, ':');
-            minutes = std::stoi(segment);
-
-            // Get seconds
-            std::getline(stream, segment);
-            seconds = std::stoi(segment);
-
-            // Convert everything to seconds and sum it up
-            totalSeconds = hours * 3600 + minutes * 60 + seconds;
-            std::cout<< hours<<std::endl;
-            std::cout<< minutes<<std::endl;
-            std::cout<< seconds<<std::endl;
-
-            return totalSeconds;
-        };
-
-        // Use the lambda and print the result
-        int totalSeconds = convertToSeconds(time);
-        std::cout << "Total seconds: " << totalSeconds << std::endl;
-*//*
-
-
-
-        Row Row(Sep 23 12:58:18 80.169.79.65:1150 "Failed password for illegal user root")
-        return 0;
-    }
-*/
 #include "DataFrame.h"
 #include <fstream>
 #include <iostream>
@@ -58,14 +5,19 @@ int main(){
 #include "Row.h"
 
 
-// Utility function to parse a log line and create a Row object.
+/**
+ * Parses a log entry string into its constituent components and creates a Row object from them.
+ * @param logEntry The log entry string to parse.
+ * @return A Row object initialized with the parsed components of the log entry.
+ * @complexity O(n) - Where n is the length of the logEntry string. The complexity arises from the operations of parsing the string into components.
+ */
 Row parseLogEntry(const std::string& logEntry) {
     std::istringstream iss(logEntry);
     std::string month, day, time, ipPort, logMessage;
     iss >> month >> day >> time >> ipPort;
-    std::getline(iss, logMessage); // Capture the rest of the entry as the log message.
+    std::getline(iss, logMessage);
 
-    // Extract IP and port.
+
     size_t colonPos = ipPort.find(':');
     std::string ip = ipPort.substr(0, colonPos);
     std::string portStr = ipPort.substr(colonPos + 1);
@@ -74,7 +26,7 @@ Row parseLogEntry(const std::string& logEntry) {
 }
 
 int main() {
-  /*  std::vector<Row> rows;
+    std::vector<Row> rows;
     std::ifstream file("bitacora.txt");
     std::string line;
 
@@ -82,43 +34,24 @@ int main() {
         rows.push_back(parseLogEntry(line));
     }
 
-
     DataFrame df(rows);
     df.radixSort();
-
     std::string startDate, endDate;
-    std::cout << "Enter the start date (Jun 01 00:22:36): ";
+    std::cout << "Enter the start date example (Jun 01 00:22:36): ";
     std::getline(std::cin, startDate);
-    std::cout << "Enter the end date (Jun 02 23:59:59): ";
+    std::cout << "Enter the end date example (Jun 02 23:59:59): ";
     std::getline(std::cin, endDate);
-
-    df.displayRecordsInRange(startDate, endDate);*/
-  /*  df.saveToFile("bitacora_ordenada.txt");*/
-
-    // Print the sorted data.
-   /* for (const auto& row : df.Data) {
-        std::cout << row.month << " " << row.day << " " << row.time << " " << row.ip << ":" << row.port << " " << row.log << std::endl;
-    }*/
-
-    DataFrame df;
-
-    // Populate the DataFrame with sorted Row objects
-    // Assuming Row has a constructor that takes a timeNumber and other necessary data
-
-    df.Data.push_back(Row("Oct", "01", "00:00:00", "192.168.1.1", "10", "Login Success"));
-    df.Data.push_back(Row("Oct", "3", "00:00:00", "192.168.1.1", "10", "Login Success"));
-    df.Data.push_back(Row("Oct", "04", "00:00:00", "192.168.1.1", "10", "Login Success"));
-    df.Data.push_back(Row("Jan", "01", "00:10:00", "192.168.1.2", "10", "Login Failed"));
-    df.Data.push_back(Row("Jan", "03", "00:20:00", "192.168.1.3", "10", "File Accessed"));
-
-    df.Print();
-    // Make sure to add Rows in sorted order of their timeNumber for binary search to work
-    std::cout<<"-----------------------------------------------------"<<std::endl;
-
-   DataFrame newD =df.trimData(df,2765400,2938800);
-    // Search for a Row by timeNumber
-
-   newD.Print();
+    std::istringstream issStart(startDate);
+    std::string monthS, dayS, timeS;
+    issStart >> monthS >> dayS >> timeS;
+    std::istringstream issEnd(endDate);
+    std::string monthE, dayE, timeE;
+    issEnd >> monthE >> dayE >> timeE;
+    Row startTemp = Row(monthS,dayS,timeS,"000.000.000","0000","temp");
+    Row endTemp = Row(monthE,dayE,timeE,"000.000.000","0000","temp");
+    DataFrame newD =df.trimData(df,startTemp.timeNumber,endTemp.timeNumber);
+    newD.saveToFile("bitacora_ordenada.txt");
+    newD.Print();
 
     return 0;
 }

@@ -1,12 +1,18 @@
-//
-// Created by Lou on 4/7/2024.
-//
 
 #include "Row.h"
 #include <sstream>
 #include <unordered_map>
 
-
+/**
+ * Constructor for the Row class that initializes a row with the provided data.
+ * @param month The month component of the row's date.
+ * @param day The day component of the row's date.
+ * @param time The time of day for the row's timestamp.
+ * @param ip The IP address associated with the row.
+ * @param port The port number associated with the row, as a string to be converted to integer.
+ * @param log The log message associated with the row.
+ * @complexity O(1) - Assuming 'convertDate' and 'buildIPArray' functions operate in constant time. The actual complexity might vary based on the implementations of these functions.
+ */
 Row::Row(std::string month, std::string day, std::string time, std::string ip,std::string port, std::string log) {
     this->month = month;
     this->day = day;
@@ -18,12 +24,27 @@ Row::Row(std::string month, std::string day, std::string time, std::string ip,st
     this->ipArray = buildIPArray(ip);
 
 }
+/**
+ * Converts the Row's data to a string representation.
+ * @return A string representation of the Row's data.
+ * @complexity O(1) - The complexity is constant, assuming string concatenation and integer-to-string conversion are constant time operations.
+ */
 std::string Row::toString() const {
-    // Sample implementation concatenating member variables.
     return month + " " + day + " " + time + " " + ip + " " + std::to_string(port) + " " + log;
 }
 
-
+/**
+ * Builds an array of integers from an IP address string.
+ *
+ * Takes an IP address in string format, splits it into its constituent segments based on the '.' delimiter,
+ * and converts each segment into an integer. These integers are then stored in a vector, effectively transforming
+ * the dotted decimal notation of an IP address into a numeric array representation.
+ *
+ * @param ip The IP address string to be converted into an array of integers.
+ * @return A vector of integers, each representing a segment of the IP address.
+ * @complexity O(n) - Where n is the number of characters in the IP address string. The complexity arises from
+ * iterating through the string to split it into segments and converting those segments to integers.
+ */
 std::vector<int> Row::buildIPArray(const std::string &ip) {
     std::vector<int> ipArray;
     std::stringstream ss(ip);
@@ -35,7 +56,14 @@ std::vector<int> Row::buildIPArray(const std::string &ip) {
 
     return ipArray;
 }
-
+/**
+ * Converts a date and time into a total number of seconds.
+ * @param m The month part of the date as a three-letter abbreviation (e.g., "Jan", "Feb").
+ * @param d The day part of the date.
+ * @param t The time in "HH:MM:SS" format.
+ * @return The total number of seconds represented by the input date and time since the beginning of the year.
+ * @complexity O(1) - While there are loops and iterations, their operations are bounded by a constant (the size of the daysPerMonth vector and the fixed format of the time), leading to constant complexity.
+ */
 size_t Row::convertDate(const std::string& m, const std::string& d, const std::string & t){
     int totalDays = 0;
     size_t totalSeconds= 0;
@@ -58,7 +86,6 @@ size_t Row::convertDate(const std::string& m, const std::string& d, const std::s
         minutes = std::stoi(segment);
         std::getline(stream, segment);
         seconds = std::stoi(segment);
-        // Convert everything to seconds and sum it up
         totalSeconds = hours * 3600 + minutes * 60 + seconds;
         return totalSeconds;
     };
@@ -78,33 +105,10 @@ size_t Row::convertDate(const std::string& m, const std::string& d, const std::s
     else if (month == "Dec"){ totalDays += addDays(12);}
     totalDays = totalDays + stoi(day);
     totalSeconds = convertToSeconds(t) + (totalDays *86400);
-    std::cout<<totalSeconds<<std::endl;
-
     return totalSeconds;
 }
 
-std::unordered_map<std::string, std::string> monthMap = {
-        {"Jan", "01"}, {"Feb", "02"}, {"Mar", "03"},
-        {"Apr", "04"}, {"May", "05"}, {"Jun", "06"},
-        {"Jul", "07"}, {"Aug", "08"}, {"Sep", "09"},
-        {"Oct", "10"}, {"Nov", "11"}, {"Dec", "12"}
-};
-
-std::string Row::convertToDate(const std::string& dateTime) {
-    std::istringstream iss(dateTime);
-    std::string month, day, time;
-    iss >> month >> day >> time;
-
-    // Split time into HH, MM, SS
-    std::string hour, minute, second;
-    std::istringstream timeIss(time);
-    std::getline(timeIss, hour, ':');
-    std::getline(timeIss, minute, ':');
-    std::getline(timeIss, second, ':');
 
 
-    std::string formattedDate = monthMap[month] + day + hour + minute + second;
 
-    return formattedDate;
-}
 
