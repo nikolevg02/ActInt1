@@ -23,6 +23,12 @@ public:
 
     void displayRecordsInRange(const std::string& start, const std::string& end);
     void saveToFile(const std::string& filename);
+    DataFrame segmentData(std::string start, std::string end);
+
+    int binarySearchByTimeNumber(size_t referenceTimeNumber);
+    DataFrame trimData(DataFrame&  origData, int startDayN, int endDayN);
+    size_t size();
+    void Print();
 };
 
 

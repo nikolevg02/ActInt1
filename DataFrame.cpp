@@ -114,6 +114,7 @@ int Row::compareTo(const std::string& dateTime) const {
 }
 
 
+/*
 int DataFrame::binarySearch(const std::string& dateTime, bool searchFirst) {
     int low = 0;
     int high = Data.size() - 1;
@@ -143,8 +144,43 @@ int DataFrame::binarySearch(const std::string& dateTime, bool searchFirst) {
     }
     return result;
 }
+*/
 
+/* DataFrame DataFrame::trimData(DataFrame &origData, int startDayN, int endDayN) {
+    int startIndex = -1;
+    int endIndex = -1;
 
+    // Find start and end indices in a single pass
+    for (int i = 0; i < origData.size(); ++i) {
+        if (startIndex == -1 && origData.Data[i].timeNumber >= startDayN) {
+            startIndex = i; // Set start index when we find the first matching or exceeding dayNumber
+        }
+        if (origData.Data[i].timeNumber <= endDayN) {
+            endIndex = i; // Update end index while we are within or equal to the endDayN
+        }
+    }
+
+    // Check if valid segment was found
+    if (startIndex == -1 || endIndex == -1 || startIndex > endIndex) {
+        return {}; // Return an empty vector if no valid segment is found
+    }
+
+    // Create the segmented data vector using the calculated indices
+    std::vector<Row> trimmedData(origData.Data.begin() + startIndex, origData.Data.begin() + endIndex + 1);
+
+    return trimmedData;
+}*/
+
+DataFrame DataFrame::trimData(DataFrame& origData, int startDayN, int endDayN) {
+    DataFrame result;
+    for (const auto& row : origData.Data) {
+        if (row.timeNumber >= startDayN && row.timeNumber <= endDayN) {
+            result.Data.push_back(row);
+        }
+    }
+    return result;
+}
+/*
 void DataFrame::displayRecordsInRange(const std::string& start, const std::string& end) {
     // Convert start and end to comparable format
     auto startComparable = Row::convertToDate(start);
@@ -165,6 +201,7 @@ void DataFrame::displayRecordsInRange(const std::string& start, const std::strin
         std::cout << Data[i].toString() << std::endl; // Assuming toString method exists
     }
 }
+*/
 
 void DataFrame::saveToFile(const std::string& filename) {
     std::ofstream file(filename);
@@ -173,3 +210,55 @@ void DataFrame::saveToFile(const std::string& filename) {
     }
     file.close();
 }
+
+int DataFrame::binarySearchByTimeNumber(size_t referenceTimeNumber) {
+    int low = 0;
+    int high = Data.size() - 1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+
+        if (Data[mid].timeNumber == referenceTimeNumber) {
+            return mid; // Found the matching time number, return its index
+        } else if (Data[mid].timeNumber < referenceTimeNumber) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return -1; // Not found
+}
+DataFrame DataFrame::segmentData(std::string start, std::string end) {
+    std::istringstream issStart(start);
+    std::string monthS, dayS, timeS;
+    issStart >> monthS >> dayS >> timeS;
+
+
+
+    std::istringstream issEnd(end);
+    std::string monthE, dayE, timeE;
+    issEnd >> monthE >> dayE >> timeE;
+
+    Row startTemp = Row(monthS,dayS,timeS,"000.000.000","0000","temp");
+    Row endTemp = Row(monthE,dayE,timeE,"000.000.000","0000","temp");
+    size_t startSecondsTime = startTemp.timeNumber;
+    size_t endSecondsTime = endTemp.timeNumber;
+
+
+
+    return DataFrame();
+}
+
+size_t DataFrame::size() {
+
+
+    return this->Data.size();
+}
+
+void DataFrame::Print() {
+    for(auto data: this->Data){
+        std::cout<<data.month<<" "<<data.day<<" "<<data.time<<" "<<data.ip<<data.port<<" "<<data.log<<std::endl;
+    }
+}
+

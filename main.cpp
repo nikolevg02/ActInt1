@@ -55,6 +55,7 @@ int main(){
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include "Row.h"
 
 
 // Utility function to parse a log line and create a Row object.
@@ -73,7 +74,7 @@ Row parseLogEntry(const std::string& logEntry) {
 }
 
 int main() {
-    std::vector<Row> rows;
+  /*  std::vector<Row> rows;
     std::ifstream file("bitacora.txt");
     std::string line;
 
@@ -91,13 +92,33 @@ int main() {
     std::cout << "Enter the end date (Jun 02 23:59:59): ";
     std::getline(std::cin, endDate);
 
-    df.displayRecordsInRange(startDate, endDate);
-    df.saveToFile("bitacora_ordenada.txt");
+    df.displayRecordsInRange(startDate, endDate);*/
+  /*  df.saveToFile("bitacora_ordenada.txt");*/
 
     // Print the sorted data.
    /* for (const auto& row : df.Data) {
         std::cout << row.month << " " << row.day << " " << row.time << " " << row.ip << ":" << row.port << " " << row.log << std::endl;
     }*/
+
+    DataFrame df;
+
+    // Populate the DataFrame with sorted Row objects
+    // Assuming Row has a constructor that takes a timeNumber and other necessary data
+
+    df.Data.push_back(Row("Oct", "01", "00:00:00", "192.168.1.1", "10", "Login Success"));
+    df.Data.push_back(Row("Oct", "3", "00:00:00", "192.168.1.1", "10", "Login Success"));
+    df.Data.push_back(Row("Oct", "04", "00:00:00", "192.168.1.1", "10", "Login Success"));
+    df.Data.push_back(Row("Jan", "01", "00:10:00", "192.168.1.2", "10", "Login Failed"));
+    df.Data.push_back(Row("Jan", "03", "00:20:00", "192.168.1.3", "10", "File Accessed"));
+
+    df.Print();
+    // Make sure to add Rows in sorted order of their timeNumber for binary search to work
+    std::cout<<"-----------------------------------------------------"<<std::endl;
+
+   DataFrame newD =df.trimData(df,2765400,2938800);
+    // Search for a Row by timeNumber
+
+   newD.Print();
 
     return 0;
 }

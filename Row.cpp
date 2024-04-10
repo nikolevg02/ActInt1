@@ -78,7 +78,7 @@ size_t Row::convertDate(const std::string& m, const std::string& d, const std::s
     else if (month == "Dec"){ totalDays += addDays(12);}
     totalDays = totalDays + stoi(day);
     totalSeconds = convertToSeconds(t) + (totalDays *86400);
-
+    std::cout<<totalSeconds<<std::endl;
 
     return totalSeconds;
 }
@@ -107,3 +107,4 @@ std::string Row::convertToDate(const std::string& dateTime) {
 
     return formattedDate;
 }
+

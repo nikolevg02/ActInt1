@@ -20,6 +20,7 @@ public:
     std::vector<int> ipArray;
 
 
+
     Row(std::string m, std::string d, std::string t, std::string i,std::string p, std::string l);
 
     static std::vector<int> buildIPArray(const std::string& ip);
@@ -39,6 +40,8 @@ public:
 
     static std::string convertToDate(const std::string &dateTime);
     std::string toString() const; // Declaration
+
+
 };
 
 
