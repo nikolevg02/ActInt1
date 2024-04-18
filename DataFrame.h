@@ -1,13 +1,12 @@
-
-
 #ifndef ACTINT1_DATAFRAME_H
 #define ACTINT1_DATAFRAME_H
 
 #include <vector>
 #include "Row.h"
+
 class DataFrame {
 public:
-    std::vector<Row>Data;
+    std::vector<Row> Data;
 
     // Default constructor initializes with an empty DataFrame
     DataFrame();
@@ -17,6 +16,8 @@ public:
     void radixSort();
     void bubbleSort();
 
+    // Function declaration for binary search
+    int binarySearch(const std::vector<Row>& data, size_t targetTimeNumber);
 
     int binarySearch(const std::string &dateTime, bool searchFirst);
     int compareTo(const std::string& dateTime) const;
@@ -31,5 +32,5 @@ public:
     void Print();
 };
 
-
 #endif //ACTINT1_DATAFRAME_H
+
