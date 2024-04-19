@@ -159,7 +159,7 @@ std::vector<std::string> parseDateTime(const std::string& dateTime) {
  * @param endDayN The inclusive end of the 'timeNumber' range.
  * @return A new DataFrame containing rows from the original DataFrame that fall within the specified 'timeNumber' range.
  * @complexity O(n) - Where n is the number of rows in the original DataFrame. The complexity comes from needing to iterate through each row once.
- */
+ *//*
 
 DataFrame DataFrame::trimData(DataFrame& origData, int startDayN, int endDayN) {
     DataFrame result;
@@ -169,7 +169,17 @@ DataFrame DataFrame::trimData(DataFrame& origData, int startDayN, int endDayN) {
         }
     }
     return result;
+}*/
+DataFrame DataFrame::trimData(DLL& origData, int startDayN, int endDayN) {
+    DataFrame result;
+    for (const auto& row : origData.Data) {
+        if (row.timeNumber >= startDayN && row.timeNumber <= endDayN) {
+            result.Data.push_back(row);
+        }
+    }
+    return result;
 }
+
 
 /**
  * Saves the DataFrame's data to a file, with each row converted to a string representation followed by a newline.

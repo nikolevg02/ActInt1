@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include "Row.h"
+#include "DLinkedList.h"
 
 
 /**
@@ -26,16 +27,17 @@ Row parseLogEntry(const std::string& logEntry) {
 }
 
 int main() {
-    std::vector<Row> rows;
+    DLinkedList<Row> myList;
     std::ifstream file("bitacora.txt");
     std::string line;
 
     while (std::getline(file, line)) {
-        rows.push_back(parseLogEntry(line));
+        myList.addFirst(parseLogEntry(line));
+
     }
 
-    DataFrame df(rows);
-    df.radixSort();
+    DLinkedList<Row> df;
+    df.sort();
     std::string startDate, endDate;
     std::cout << "Enter the start date example (Jun 01 00:22:36): ";
     std::getline(std::cin, startDate);
@@ -54,4 +56,29 @@ int main() {
     newD.Print();
 
     return 0;
+
+   /* // Create a doubly linked list for Row objects
+    DLinkedList<Row> myList;
+
+    // Create Row objects with different times
+    Row row1("Jan", "1", "12:00:00", "192.168.1.1", "8080", "User logged in");
+    Row row2("Jan", "1", "12:05:00", "192.168.1.2", "8080", "User logged out");
+    Row row3("Jan", "1", "11:55:00", "192.168.1.3", "8080", "Server started");
+    Row row4("Jan", "1", "12:10:00", "192.168.1.4", "8080", "Server shutdown");
+
+    // Add rows to the list
+    myList.addLast(row1);
+    myList.addLast(row2);
+    myList.addLast(row3);
+    myList.addLast(row4);
+
+    // Display the list before sorting
+    std::cout << "List before sorting:" << std::endl;
+    myList.printList();
+
+    // Sort the list
+    myList.sortMerge();
+    // Display the list after sorting
+    std::cout << "List after sorting:" << std::endl;
+    myList.printList();*/
 }

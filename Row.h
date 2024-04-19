@@ -36,9 +36,10 @@ public:
         return this->timeNumber > other.timeNumber;
     }
 
-    int compareTo(const std::string &dateTime) const;
-
-    static std::string convertToDate(const std::string &dateTime);
+    friend std::ostream& operator<<(std::ostream& os, const Row& row) {
+        os << row.month << " " << row.day << " " << row.time << " " << row.ip << " " << row.port << " " << row.log;
+        return os;
+    }
     std::string toString() const; // Declaration
 
 
